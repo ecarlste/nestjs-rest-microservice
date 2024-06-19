@@ -17,7 +17,9 @@ export class JokesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} joke`;
+    return this.prismaService.joke.findUnique({
+      where: { id },
+    });
   }
 
   update(id: number, updateJokeDto: UpdateJokeDto) {

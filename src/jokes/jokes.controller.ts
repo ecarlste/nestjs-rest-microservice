@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { JokesService } from './jokes.service';
 import { CreateJokeDto } from './dto/create-joke.dto';
@@ -26,8 +28,14 @@ export class JokesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jokesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.jokesService.findOne(+id);
+
+    if (!result) {
+      throw new HttpException('Joke not found', HttpStatus.NOT_FOUND);
+    }
+
+    return result;
   }
 
   @Patch(':id')
