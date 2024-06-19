@@ -1,1 +1,3 @@
-export class CreateJokeDto {}
+import { Joke } from '@prisma/client';
+
+export type CreateJokeDto = Omit<Joke, 'id'>;

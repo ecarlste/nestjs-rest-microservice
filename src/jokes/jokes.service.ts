@@ -9,7 +9,9 @@ export class JokesService {
   constructor(private readonly prismaService: PrismaService) {}
 
   create(createJokeDto: CreateJokeDto) {
-    return 'This action adds a new joke';
+    return this.prismaService.joke.create({
+      data: createJokeDto,
+    });
   }
 
   findAll(): Promise<JokeModel[]> {
@@ -17,14 +19,21 @@ export class JokesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} joke`;
+    return this.prismaService.joke.findUnique({
+      where: { id },
+    });
   }
 
   update(id: number, updateJokeDto: UpdateJokeDto) {
-    return `This action updates a #${id} joke`;
+    return this.prismaService.joke.update({
+      where: { id },
+      data: updateJokeDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} joke`;
+    return this.prismaService.joke.delete({
+      where: { id },
+    });
   }
 }

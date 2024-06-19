@@ -1,4 +1,3 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateJokeDto } from './create-joke.dto';
+import { Joke } from '@prisma/client';
 
-export class UpdateJokeDto extends PartialType(CreateJokeDto) {}
+export type UpdateJokeDto = Partial<Omit<Joke, 'id'>>;

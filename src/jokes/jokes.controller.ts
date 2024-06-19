@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { JokesService } from './jokes.service';
 import { CreateJokeDto } from './dto/create-joke.dto';
 import { UpdateJokeDto } from './dto/update-joke.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Controller('jokes')
 export class JokesController {
@@ -26,17 +29,39 @@ export class JokesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jokesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.jokesService.findOne(+id);
+
+    if (!result) {
+      throw new HttpException('Joke not found', HttpStatus.NOT_FOUND);
+    }
+
+    return result;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJokeDto: UpdateJokeDto) {
-    return this.jokesService.update(+id, updateJokeDto);
+  async update(@Param('id') id: string, @Body() updateJokeDto: UpdateJokeDto) {
+    try {
+      return await this.jokesService.update(+id, updateJokeDto);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new HttpException('Joke not found', HttpStatus.NOT_FOUND);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jokesService.remove(+id);
+  async cremove(@Param('id') id: string) {
+    try {
+      return await this.jokesService.remove(+id);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new HttpException('Joke not found', HttpStatus.NOT_FOUND);
+      } else {
+        throw error;
+      }
+    }
   }
 }
