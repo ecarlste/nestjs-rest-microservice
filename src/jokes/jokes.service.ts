@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateJokeDto } from './dto/create-joke.dto';
 import { UpdateJokeDto } from './dto/update-joke.dto';
+import { PrismaService } from 'nestjs-prisma';
+import { Joke as JokeModel } from '@prisma/client';
 
 @Injectable()
 export class JokesService {
+  constructor(private readonly prismaService: PrismaService) {}
+
   create(createJokeDto: CreateJokeDto) {
     return 'This action adds a new joke';
   }
 
-  findAll() {
-    return `This action returns all jokes`;
+  findAll(): Promise<JokeModel[]> {
+    return this.prismaService.joke.findMany();
   }
 
   findOne(id: number) {
